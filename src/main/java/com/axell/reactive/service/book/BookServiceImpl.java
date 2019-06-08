@@ -11,7 +11,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import rx.Completable;
 import rx.Single;
 
@@ -30,7 +29,6 @@ public class BookServiceImpl implements BookService {
     private AuthorRepository authorRepository;
 
     @Override
-    @Transactional
     public Single<String> addBook(AddBookRequest addBookRequest) {
         return saveBookToRepository(addBookRequest);
     }
@@ -58,7 +56,6 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Transactional
     public Completable updateBook(UpdateBookRequest updateBookRequest) {
         return updateBookToRepository(updateBookRequest);
     }
@@ -78,7 +75,6 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Transactional
     public Single<List<BookResponse>> getAllBooks(int limit, int page) {
         return findAllBooksInRepository(limit, page)
                 .map(this::toBookResponseList);
@@ -106,7 +102,6 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Transactional
     public Single<BookResponse> getBookDetail(String id) {
         return findBookDetailInRepository(id);
     }
@@ -124,7 +119,6 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Transactional
     public Completable deleteBook(String id) {
         return deleteBookInRepository(id);
     }
