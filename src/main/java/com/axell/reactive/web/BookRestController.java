@@ -33,7 +33,7 @@ public class BookRestController {
     )
     public Single<ResponseEntity<BaseWebResponse>> addBook(@RequestBody AddBookWebRequest addBookWebRequest) {
         return bookService.addBook(toAddBookRequest(addBookWebRequest))
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.io())
                 .map(s -> ResponseEntity.created(URI.create("/api/books/" + s)).body(BaseWebResponse.successNoData()));
     }
 
@@ -51,7 +51,7 @@ public class BookRestController {
     public Single<ResponseEntity<BaseWebResponse>> updateBook(@PathVariable(value = "bookId") String bookId,
                                                               @RequestBody UpdateBookWebRequest updateBookWebRequest) {
         return bookService.updateBook(toUpdateBookRequest(bookId, updateBookWebRequest))
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.io())
                 .toSingle(() -> ResponseEntity.ok(BaseWebResponse.successNoData()));
     }
 
@@ -68,7 +68,7 @@ public class BookRestController {
     public Single<ResponseEntity<BaseWebResponse<List<BookWebResponse>>>> getAllBooks(@RequestParam(value = "limit", defaultValue = "5") int limit,
                                                                                       @RequestParam(value = "page", defaultValue = "0") int page) {
         return bookService.getAllBooks(limit, page)
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.io())
                 .map(bookResponses -> ResponseEntity.ok(BaseWebResponse.successWithData(toBookWebResponseList(bookResponses))));
     }
 
@@ -101,7 +101,7 @@ public class BookRestController {
     )
     public Single<ResponseEntity<BaseWebResponse>> deleteBook(@PathVariable(value = "bookId") String bookId) {
         return bookService.deleteBook(bookId)
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.io())
                 .toSingle(() -> ResponseEntity.ok(BaseWebResponse.successNoData()));
     }
 

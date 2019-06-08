@@ -30,7 +30,7 @@ public class AuthorRestController {
     )
     public Single<ResponseEntity<BaseWebResponse>> addAuthor(@RequestBody AddAuthorWebRequest addAuthorWebRequest) {
         return authorService.addAuthor(toAddAuthorRequest(addAuthorWebRequest))
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.io())
                 .map(s -> ResponseEntity
                         .created(URI.create("/api/authors/" + s))
                         .body(BaseWebResponse.successNoData()));
