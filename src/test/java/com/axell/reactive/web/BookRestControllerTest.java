@@ -7,8 +7,9 @@ import com.axell.reactive.servicedto.request.UpdateBookRequest;
 import com.axell.reactive.servicedto.response.BookResponse;
 import com.axell.reactive.webdto.request.AddBookWebRequest;
 import com.axell.reactive.webdto.request.UpdateBookWebRequest;
-import com.axell.reactive.webdto.response.BookWebResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.reactivex.Completable;
+import io.reactivex.Single;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import rx.Completable;
-import rx.Single;
 
 import javax.persistence.EntityNotFoundException;
-
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.equalTo;

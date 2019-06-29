@@ -3,8 +3,8 @@ package com.axell.reactive.service.book;
 import com.axell.reactive.servicedto.request.AddBookRequest;
 import com.axell.reactive.servicedto.request.UpdateBookRequest;
 import com.axell.reactive.servicedto.response.BookResponse;
-import rx.Completable;
-import rx.Single;
+import io.reactivex.Completable;
+import io.reactivex.Single;
 
 import java.util.List;
 

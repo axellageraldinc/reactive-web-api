@@ -28,13 +28,13 @@ public class AuthorServiceImplTest {
     @Test
     public void AddAuthor_Success_ReturnSingleOfAddedAuthorId() {
         when(authorRepository.save(any(Author.class)))
-                .thenReturn(new Author());
+                .thenReturn(new Author("1", "Axell"));
 
         authorService.addAuthor(new AddAuthorRequest("1"))
                 .test()
-                .awaitTerminalEvent()
-                .assertCompleted()
-                .assertNoErrors();
+                .assertComplete()
+                .assertNoErrors()
+                .awaitTerminalEvent();
 
         verify(authorRepository, times(1)).save(any(Author.class));
     }

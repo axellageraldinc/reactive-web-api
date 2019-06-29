@@ -4,10 +4,11 @@ import com.axell.reactive.entity.Author;
 import com.axell.reactive.entity.Book;
 import com.axell.reactive.repository.AuthorRepository;
 import com.axell.reactive.repository.BookRepository;
-import com.axell.reactive.service.book.BookServiceImpl;
 import com.axell.reactive.servicedto.request.AddBookRequest;
 import com.axell.reactive.servicedto.request.UpdateBookRequest;
 import com.axell.reactive.servicedto.response.BookResponse;
+import io.reactivex.observers.TestObserver;
+import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -51,10 +52,10 @@ public class BookServiceImplTest {
 
         bookService.addBook(new AddBookRequest("1", "1"))
                 .test()
-                .awaitTerminalEvent()
-                .assertCompleted()
+                .assertComplete()
                 .assertNoErrors()
-                .assertValue("1");
+                .assertValue("1")
+                .awaitTerminalEvent();
 
         InOrder inOrder = inOrder(authorRepository, bookRepository);
         inOrder.verify(authorRepository, times(1)).findById(anyString());
@@ -68,9 +69,9 @@ public class BookServiceImplTest {
 
         bookService.addBook(new AddBookRequest("1", "1"))
                 .test()
-                .awaitTerminalEvent()
-                .assertNotCompleted()
-                .assertError(EntityNotFoundException.class);
+                .assertNotComplete()
+                .assertError(EntityNotFoundException.class)
+                .awaitTerminalEvent();
 
         InOrder inOrder = inOrder(authorRepository, bookRepository);
         inOrder.verify(authorRepository, times(1)).findById(anyString());
@@ -86,9 +87,9 @@ public class BookServiceImplTest {
 
         bookService.updateBook(new UpdateBookRequest("1", "1"))
                 .test()
-                .awaitTerminalEvent()
-                .assertCompleted()
-                .assertNoErrors();
+                .assertComplete()
+                .assertNoErrors()
+                .awaitTerminalEvent();
 
         InOrder inOrder = inOrder(bookRepository);
         inOrder.verify(bookRepository, times(1)).findById(anyString());
@@ -102,9 +103,9 @@ public class BookServiceImplTest {
 
         bookService.updateBook(new UpdateBookRequest("1", "1"))
                 .test()
-                .awaitTerminalEvent()
-                .assertNotCompleted()
-                .assertError(EntityNotFoundException.class);
+                .assertNotComplete()
+                .assertError(EntityNotFoundException.class)
+                .awaitTerminalEvent();
 
         InOrder inOrder = inOrder(bookRepository);
         inOrder.verify(bookRepository, times(1)).findById(anyString());
@@ -113,35 +114,34 @@ public class BookServiceImplTest {
 
     @Test
     public void GetAllBooks_Success_ReturnSingleOfBookResponseList() {
+        Book book1 = new Book("1", "1", new Author());
+        Book book2 = new Book("2", "2", new Author());
+
         when(bookRepository.findAll(any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(
-                        Arrays.asList(
-                                new Book("1", "1", new Author()),
-                                new Book("2", "2", new Author())
-                        )));
+                        Arrays.asList(book1, book2)));
 
-        AssertableSubscriber<List<BookResponse>> testSubscriber = bookService.getAllBooks(1, 1).test();
+        TestObserver<List<BookResponse>> testObserver = bookService.getAllBooks(1, 1).test();
 
-        testSubscriber.awaitTerminalEvent();
+        testObserver.awaitTerminalEvent();
 
-        assertThat(testSubscriber.getOnNextEvents().get(0).get(0).getId(), equalTo("1"));
-        assertThat(testSubscriber.getOnNextEvents().get(0).get(1).getId(), equalTo("2"));
+        testObserver.assertValue(bookResponses -> bookResponses.get(0).getId().equals("1") && bookResponses.get(1).getId().equals("2"));
 
         verify(bookRepository, times(1)).findAll(any(PageRequest.class));
     }
 
     @Test
     public void GetBookDetail_Success_ReturnSingleOfBookResponse() {
+        Book book1 = new Book("1", "1", new Author("1", "1"));
+
         when(bookRepository.findById(anyString()))
-                .thenReturn(Optional.of(new Book("1", "1", new Author("1", "1"))));
+                .thenReturn(Optional.of(book1));
 
-        AssertableSubscriber<BookResponse> testSubscriber = bookService.getBookDetail("1").test();
+        TestObserver<BookResponse> testObserver = bookService.getBookDetail("1").test();
 
-        testSubscriber.awaitTerminalEvent();
-        testSubscriber.assertCompleted();
-        testSubscriber.assertNoErrors();
+        testObserver.awaitTerminalEvent();
 
-        assertThat(testSubscriber.getOnNextEvents().get(0).getId(), equalTo("1"));
+        testObserver.assertValue(bookResponse -> bookResponse.getId().equals("1"));
 
         verify(bookRepository, times(1)).findById(anyString());
     }
@@ -153,9 +153,9 @@ public class BookServiceImplTest {
 
         bookService.getBookDetail("1")
                 .test()
-                .awaitTerminalEvent()
-                .assertNotCompleted()
-                .assertError(EntityNotFoundException.class);
+                .assertNotComplete()
+                .assertError(EntityNotFoundException.class)
+                .awaitTerminalEvent();
 
         verify(bookRepository, times(1)).findById(anyString());
     }
@@ -168,9 +168,9 @@ public class BookServiceImplTest {
 
         bookService.deleteBook("1")
                 .test()
-                .awaitTerminalEvent()
-                .assertCompleted()
-                .assertNoErrors();
+                .assertComplete()
+                .assertNoErrors()
+                .awaitTerminalEvent();
 
         InOrder inOrder = inOrder(bookRepository);
         inOrder.verify(bookRepository, times(1)).findById(anyString());
@@ -184,9 +184,9 @@ public class BookServiceImplTest {
 
         bookService.deleteBook("1")
                 .test()
-                .awaitTerminalEvent()
-                .assertNotCompleted()
-                .assertError(EntityNotFoundException.class);
+                .assertNotComplete()
+                .assertError(EntityNotFoundException.class)
+                .awaitTerminalEvent();
 
         InOrder inOrder = inOrder(bookRepository);
         inOrder.verify(bookRepository, times(1)).findById(anyString());

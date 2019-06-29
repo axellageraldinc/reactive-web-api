@@ -3,10 +3,10 @@ package com.axell.reactive.service.author;
 import com.axell.reactive.entity.Author;
 import com.axell.reactive.repository.AuthorRepository;
 import com.axell.reactive.servicedto.request.AddAuthorRequest;
+import io.reactivex.Single;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import rx.Single;
 
 import java.util.UUID;
 
