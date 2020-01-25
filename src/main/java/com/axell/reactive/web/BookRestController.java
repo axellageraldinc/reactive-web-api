@@ -30,18 +30,18 @@ public class BookRestController {
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public Single<ResponseEntity<BaseWebResponse>> addBook(@RequestBody AddBookWebRequest addBookWebRequest) {
-        return bookService.addBook(toAddBookRequest(addBookWebRequest))
-                .subscribeOn(Schedulers.io())
-                .map(s -> ResponseEntity.created(URI.create("/api/books/" + s)).body(BaseWebResponse.successNoData()));
+    ) public Single<ResponseEntity<BaseWebResponse>> addBook(
+        @RequestBody AddBookRequest addBookRequest) {
+        return bookService.addBook(addBookRequest).subscribeOn(Schedulers.io()).map(
+            s -> ResponseEntity.created(URI.create("/api/books/" + s))
+                .body(BaseWebResponse.successNoData()));
     }
 
-    private AddBookRequest toAddBookRequest(AddBookWebRequest addBookWebRequest) {
+    /*private AddBookRequest toAddBookRequest(AddBookWebRequest addBookWebRequest) {
         AddBookRequest addBookRequest = new AddBookRequest();
         BeanUtils.copyProperties(addBookWebRequest, addBookRequest);
         return addBookRequest;
-    }
+    }*/
 
     @PutMapping(
             value = "/{bookId}",
